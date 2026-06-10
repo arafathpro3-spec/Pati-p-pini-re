@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Mon Potager Bio — Légumes & Plants</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Lato', sans-serif;
+    background: #fefaf5;
+    color: #1a2e1a;
+    overflow-x: hidden;
+  }
+  header {
+    background: #1a4a1a;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-img {
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    background: #eaf7ea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+  }
+  .logo-text {
+    font-family: 'Playfair Display', serif;
+    color: white;
+    font-size: 1.3rem;
+    line-height: 1.1;
+  }
+  .logo-text span {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    font-weight: 300;
+    color: #c8e6c9;
+  }
+  nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  nav a {
+    color: #e8f5e9;
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 6px 14px;
+    border-radius: 30px;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  nav a:hover, nav a.active {
+    background: #4caf50;
+    color: white;
+  }
+  .cart-btn {
+    background: #25d366;
+    color: white !important;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px !important;
+  }
+  .cart-badge {
+    background: white;
+    color: #1a4a1a;
+    border-radius: 40px;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero {
+    background: linear-gradient(125deg, #1e4a1e, #3b6e3b, #5d3a1a);
+    padding: 45px 20px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    color: white;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    color: #dcedc8;
+    margin-bottom: 20px;
+    font-size: 1rem;
+  }
+  .hero-cta {
+    background: #25d366;
+    color: white;
+    padding: 12px 28px;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .filters {
+    display: flex;
+    gap: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    background: white;
+    border-bottom: 1px solid #e0d6c8;
+  }
+  .filter-btn {
+    background: #eef5e8;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    color: #1a4a1a;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: #1a4a1a;
+    color: white;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    padding: 20px 20px 10px;
+    color: #1e3a1e;
+  }
+  /* GRILLE ADAPTATIVE : sur PC flexible, sur téléphone 2 colonnes exactes */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 22px;
+    padding: 10px 24px 40px;
+  }
+  /* Sur téléphone : exactement 2 colonnes */
+  @media (max-width: 640px) {
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      padding: 10px 14px 30px;
+    }
+  }
+  .product-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+    transition: 0.2s;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  }
+  .card-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #4caf50;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 20px;
+    z-index: 2;
+  }
+  .card-badge.promo { background: #c0392b; }
+  .card-badge.nouveau { background: #e67e22; }
+  .card-img-wrap {
+    height: 180px;
+    overflow: hidden;
+    background: #eaf7ea;
+    position: relative;
+    cursor: zoom-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.25s;
+  }
+  .img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(145deg, #dcf5dc, #b9dfb9);
+    color: #2c5e2c;
+  }
+  .product-card:hover .card-img-wrap img {
+    transform: scale(1.03);
+  }
+  .card-body {
+    padding: 14px 16px;
+  }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f4a1f;
+  }
+  .card-desc {
+    font-size: 0.75rem;
+    color: #7e6b4f;
+    margin: 6px 0 8px;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .card-price {
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: #5a3e1b;
+  }
+  .add-btn {
+    background: #1a4a1a;
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  .add-btn:active { transform: scale(0.9); }
+  #floating-cart {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    z-index: 200;
+  }
+  #cart-toggle {
+    width: 58px;
+    height: 58px;
+    background: #25d366;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.7rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  #cart-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #c0392b;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+  }
+  #cart-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 380px;
+    max-width: 100vw;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+    z-index: 300;
+    transform: translateX(110%);
+    transition: 0.25s ease-out;
+    display: flex;
+    flex-direction: column;
+  }
+  #cart-panel.open {
+    transform: translateX(0);
+  }
+  .cart-header {
+    background: #1a4a1a;
+    color: white;
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .close-cart {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+  }
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+  .cart-empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: #aaa;
+  }
+  .cart-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0e4d4;
+  }
+  .cart-item-img {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: #eaf7ea;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  .cart-item-info {
+    flex: 1;
+  }
+  .cart-item-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #2a5c2a;
+  }
+  .cart-item-price {
+    font-size: 0.75rem;
+    color: #9b7b4c;
+  }
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+  }
+  .qty-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid #6f9e6f;
+    background: none;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .cart-summary {
+    padding: 16px 20px;
+    border-top: 2px solid #e8dccc;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+  }
+  .summary-total {
+    font-weight: 900;
+    font-size: 1rem;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+    margin-top: 8px;
+    color: #1a4a1a;
+  }
+  .customer-form input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #e2d5c2;
+    border-radius: 40px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .wa-order-btn {
+    background: #25d366;
+    color: white;
+    border: none;
+    width: calc(100% - 40px);
+    margin: 12px 20px;
+    padding: 12px;
+    border-radius: 40px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 299;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+  }
+  #overlay.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+  #toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f3b1f;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+    z-index: 500;
+  }
+  #toast.show {
+    opacity: 1;
+  }
+  footer {
+    background: #1a3a1a;
+    color: #cfe9cf;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 0.75rem;
+    margin-top: 30px;
+  }
+  footer a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .social-links a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.1);
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+  .social-links a:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  .lightbox-gallery {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    flex-direction: column;
+  }
+  .lightbox-gallery .main-img {
+    max-width: 90vw;
+    max-height: 75vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .lightbox-nav {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .lightbox-nav button {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .lightbox-nav button:hover {
+    background: rgba(255,255,255,0.4);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  /* Ajustement supplémentaire pour mobile */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .card-name { font-size: 0.85rem; }
+    #cart-panel { width: 100vw; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area">
+    <img class="logo-img" id="logo-display" src="IMG-20260527-WA0138.jpg" alt="Pati" >
+    <div class="logo-text">Pati Pépinière<span>Bio & Local</span></div>
+  </div>
+  <nav>
+    <a href="#" class="active" onclick="filterProducts('all',this);return false">Tout</a>
+    <a href="#" onclick="filterProducts('legumes',this);return false">Légumes</a>
+    <a href="#" onclick="filterProducts('herbes',this);return false">Herbes</a>
+    <a href="#" onclick="filterProducts('plants',this);return false">Plants</a>
+    <a href="#" class="cart-btn" onclick="toggleCart();return false">🛒 Panier <span class="cart-badge" id="nav-count">0</span></a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h1>  Pati Pépinière</h1>
+  <p>Plants fruitiers de qualité, sélectionnés avec soin pour votre exploitation</p>
+  <a href="#" class="hero-cta" onclick="toggleCart();return false">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    Commander sur WhatsApp
+  </a>
+</section>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterProducts('all',this)">🌱 Tout voir</button>
+  <button class="filter-btn" onclick="filterProducts('legumes',this)">🥦 Légumes</button>
+  <button class="filter-btn" onclick="filterProducts('herbes',this)">🌿 Herbes aromatiques</button>
+  <button class="filter-btn" onclick="filterProducts('plants',this)">🪴 Plants & Semis</button>
+</div>
+
+<h2 class="section-title" id="products">Nos produits du jardin</h2>
+<div class="products-grid" id="products-grid"></div>
+
+<div id="floating-cart">
+  <button id="cart-toggle" onclick="toggleCart()">🛒<span id="cart-count">0</span></button>
+</div>
+
+<div id="overlay" onclick="closeCart()"></div>
+
+<div id="cart-panel">
+  <div class="cart-header">
+    <h2>🛒 Mon Panier</h2>
+    <button class="close-cart" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items-list"></div>
+  <div class="cart-summary" id="cart-summary" style="display:none">
+    <div class="summary-row"><span>Sous-total</span><span id="subtotal">0 FCFA</span></div>
+    <div class="summary-row summary-total"><span>Total</span><span id="total">0 FCFA</span></div>
+  </div>
+  <div class="customer-form" id="customer-form" style="display:none">
+    <input type="text" id="customer-name" placeholder="Votre nom *">
+    <input type="text" id="customer-addr" placeholder="Adresse de livraison">
+  </div>
+  <button class="wa-order-btn" id="wa-btn" style="display:none" onclick="sendWhatsApp()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    Envoyer la commande WhatsApp
+  </button>
+</div>
+
+<div id="toast"></div>
+
+<footer>
+  <p style="font-family:'Playfair Display',serif;font-size:1.1rem;color:white;margin-bottom:10px">🌿 Potager Bio</p>
+  <p style="margin-bottom:16px;color:#a5d6a7">Des produits frais, directement de la terre à votre assiette</p>
+  <div class="social-links">
+    <a href="https://www.tiktok.com/@monpotagerbio" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+      TikTok
+    </a>
+    <a href="https://www.facebook.com/profile.php?id=61590018525440" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      Facebook
+    </a>
+    <a href="https://www.gmail.com/patipepiniere@gmail.com">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+      Email
+    </a>
+    <a href="#" onclick="toggleCart();return false" style="background:rgba(37,211,102,0.25)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Commander
+    </a>
+  </div>
+  <hr style="border:none;border-top:1px solid rgba(255,255,255,0.1);margin-bottom:14px">
+  <p style="color:#7cb87c;font-size:0.75rem">© 2026 Potager Bio — Tous droits réservés · Livraison possible</p>
+</footer>
+
+<script>
+// ---------- PRODUITS AVEC IMAGES (URLs conservées) ----------
+const productsData = [
+  { id: "p1", name: "Pépinière palmier sélectionné", cat: "plants", price: 2000, unit: "/ pot", desc: "Cultivé et sélectionné sans pesticide.", badge: "Bio", emoji: "🌴", images: ["IMG-20260528-WA0004.jpg", "IMG-20260528-WA0005.jpg","IMG-20260528-WA0006.jpg","IMG-20260528-WA0007.jpg"] },
+  { id: "p2", name: "Pépinière d'avocatier", cat: "plants", price: 1650, unit: "/ pot", desc: "Cultivé bio, robuste et productif.", badge: "Nouveau", emoji: "🥑", images: ["IMG-20260528-WA0008.jpg","IMG-20260528-WA0009.jpg","IMG-20260528-WA0010.jpg","IMG-20260528-WA0011.jpg"] },
+  { id: "p3", name: "Pépinière manguier", cat: "plants", price: 1500, unit: "/ pot", desc: "Manguier sélectionné dans de bonnes conditions.", badge: "Bio", emoji: "🥭", images: ["IMG-20260528-WA0012.jpg","IMG-20260528-WA0013.jpg"] },
+  { id: "p4", name: "Pépinière d'orangier", cat: "plants", price: 1500, unit: "/ pot", desc: "Prêt à planter, variété résistante.", badge: "Promo", emoji: "🍊", images: ["IMG-20260528-WA0014.jpg", "IMG-20260528-WA0015.jpg"] },
+  { id: "p5", name: "Pépinière bananier", cat: "plants", price: 2500, unit: "/ botte", desc: "Résistant et non infecté.", badge: "Stock limité", emoji: "🍌", images: ["IMG-20260528-WA0016.jpg", "IMG-20260528-WA0017(1).jpg", "IMG-20260528-WA0018.jpg"] }
+];
+
+let cart = [];
+let settings = { phone: "22968995790", shopname: "Pati Pépinière", intro: "Bonjour, je souhaite commander :" };
+
+// Rendu des produits avec la première image disponible
+function renderProducts(filterCat = "all") {
+  const container = document.getElementById("products-grid");
+  if (!container) return;
+  const filtered = filterCat === "all" ? productsData : productsData.filter(p => p.cat === filterCat);
+  container.innerHTML = filtered.map(p => {
+    const firstImage = (p.images && p.images.length > 0) ? p.images[0] : "";
+    let badgeClass = "";
+    if (p.badge === "Promo") badgeClass = "promo";
+    else if (p.badge === "Nouveau") badgeClass = "nouveau";
+    return `
+    <div class="product-card" data-id="${p.id}">
+      ${p.badge ? `<div class="card-badge ${badgeClass}">${p.badge}</div>` : ''}
+      <div class="card-img-wrap" onclick="openGallery('${p.id}')">
+        ${firstImage ? `<img src="${firstImage}" alt="${p.name}" loading="lazy">` : `<div class="img-placeholder">${p.emoji || '🌱'}<small>${p.name}</small></div>`}
+      </div>
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-desc">${p.desc}</div>
+        <div class="card-footer">
+          <div class="card-price">${p.price.toLocaleString()} FCFA${p.unit || ''}</div>
+          <button class="add-btn" onclick="addToCart('${p.id}')">+</button>
+        </div>
+      </div>
+    </div>
+  `}).join('');
+  updateCartCount();
+}
+
+function addToCart(productId) {
+  const product = productsData.find(p => p.id === productId);
+  if (!product) return;
+  const existing = cart.find(item => item.id === productId);
+  if (existing) existing.qty += 1;
+  else {
+    const previewImg = (product.images && product.images.length > 0) ? product.images[0] : "";
+    cart.push({ ...product, qty: 1, previewImg });
+  }
+  updateCartUI();
+  showToast("✅ Ajouté au panier");
+}
+
+function updateCartUI() {
+  updateCartCount();
+  const container = document.getElementById("cart-items-list");
+  const summaryDiv = document.getElementById("cart-summary");
+  const customerForm = document.getElementById("customer-form");
+  const waBtn = document.getElementById("wa-btn");
+  if (!container) return;
+  if (cart.length === 0) {
+    container.innerHTML = `<div class="cart-empty"><div class="empty-icon">🛒</div><div>Votre panier est vide</div></div>`;
+    summaryDiv.style.display = "none";
+    customerForm.style.display = "none";
+    waBtn.style.display = "none";
+    return;
+  }
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-img">${item.previewImg ? `<img src="${item.previewImg}" style="width:100%;height:100%;object-fit:cover">` : `<span style="font-size:1.8rem">${item.emoji || '🥕'}</span>`}</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">${item.price.toLocaleString()} FCFA${item.unit || ''}</div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+        </div>
+      </div>
+      <button class="cart-item-remove" onclick="removeItem('${item.id}')" style="background:none;border:none;font-size:1.2rem;cursor:pointer;">🗑</button>
+    </div>
+  `).join('');
+  const subtotal = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+  document.getElementById("subtotal").innerText = subtotal.toLocaleString() + " FCFA";
+  document.getElementById("total").innerText = subtotal.toLocaleString() + " FCFA";
+  summaryDiv.style.display = "block";
+  customerForm.style.display = "block";
+  waBtn.style.display = "flex";
+}
+
+function changeQty(id, delta) {
+  const idx = cart.findIndex(i => i.id === id);
+  if (idx === -1) return;
+  const newQty = cart[idx].qty + delta;
+  if (newQty <= 0) cart.splice(idx,1);
+  else cart[idx].qty = newQty;
+  updateCartUI();
+}
+
+function removeItem(id) {
+  cart = cart.filter(i => i.id !== id);
+  updateCartUI();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s,i) => s + i.qty, 0);
+  document.getElementById("cart-count").innerText = total;
+  document.getElementById("nav-count").innerText = total;
+}
+
+let currentFilter = "all";
+function filterProducts(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderProducts(cat);
+}
+
+function toggleCart() {
+  const panel = document.getElementById("cart-panel");
+  const overlay = document.getElementById("overlay");
+  panel.classList.toggle("open");
+  overlay.classList.toggle("visible");
+}
+function closeCart() {
+  document.getElementById("cart-panel").classList.remove("open");
+  document.getElementById("overlay").classList.remove("visible");
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 1800);
+}
+
+function sendWhatsApp() {
+  if (cart.length === 0) { showToast("Votre panier est vide"); return; }
+  const name = document.getElementById("customer-name")?.value.trim() || "Client";
+  const addr = document.getElementById("customer-addr")?.value.trim() || "Non spécifiée";
+  let message = ` Bonjour pati pépinière je souhaite commander \n\n Nom: ${name}\n Adresse: ${addr}\n\n Détails:\n`;
+  cart.forEach(item => { message += ` ${item.name} x${item.qty} = ${(item.price * item.qty).toLocaleString()} FCFA\n`; });
+  const total = cart.reduce((s,i) => s + (i.price * i.qty), 0);
+  message += `\n Total: ${total.toLocaleString()} FCFA\n\nMerci  `;
+  const phone = settings.phone.replace(/\D/g,'');
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
+}
+
+// ---------- GALERIE MULTI-IMAGES (CARROUSEL) ----------
+let currentGalleryProduct = null;
+let currentImageIndex = 0;
+
+function openGallery(productId) {
+  const product = productsData.find(p => p.id === productId);
+  if (!product) return;
+  if (!product.images || product.images.length === 0) {
+    showToast("Aucune image disponible pour ce produit");
+    return;
+  }
+  currentGalleryProduct = product;
+  currentImageIndex = 0;
+  showLightboxImage();
+}
+
+function showLightboxImage() {
+  const existing = document.getElementById("dynamic-lightbox");
+  if (existing) existing.remove();
+  
+  const product = currentGalleryProduct;
+  const images = product.images;
+  const currentImg = images[currentImageIndex];
+  
+  const lightbox = document.createElement('div');
+  lightbox.id = "dynamic-lightbox";
+  lightbox.className = "lightbox-gallery";
+  lightbox.innerHTML = `
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img class="main-img" src="${currentImg}" alt="${product.name}">
+    <div class="lightbox-nav">
+      <button onclick="prevImage(event)">‹</button>
+      <button onclick="nextImage(event)">›</button>
+    </div>
+    <div style="margin-top:12px;color:white;font-size:0.8rem">${currentImageIndex+1} / ${images.length}</div>
+  `;
+  document.body.appendChild(lightbox);
+}
+
+function prevImage(event) {
+  event.stopPropagation();
+  if (!currentGalleryProduct) return;
+  const images = currentGalleryProduct.images;
+  if (images.length === 0) return;
+  currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
+  const imgEl = document.querySelector("#dynamic-lightbox .main-img");
+  if (imgEl) {
+    imgEl.src = images[currentImageIndex];
+    const counter = document.querySelector("#dynamic-lightbox div:last-child");
+    if (counter) counter.innerText = `${currentImageIndex+1} / ${images.length}`;
+  }
+}
+
+function nextImage(event) {
+  event.stopPropagation();
+  if (!currentGalleryProduct) return;
+  const images = currentGalleryProduct.images;
+  if (images.length === 0) return;
+  currentImageIndex = (currentImageIndex + 1) % images.length;
+  const imgEl = document.querySelector("#dynamic-lightbox .main-img");
+  if (imgEl) {
+    imgEl.src = images[currentImageIndex];
+    const counter = document.querySelector("#dynamic-lightbox div:last-child");
+    if (counter) counter.innerText = `${currentImageIndex+1} / ${images.length}`;
+  }
+}
+
+function closeLightbox() {
+  const el = document.getElementById("dynamic-lightbox");
+  if (el) el.remove();
+  currentGalleryProduct = null;
+}
+
+// Initialisation
+renderProducts();
+updateCartCount();
+
+// Sauvegarde du panier
+window.addEventListener('beforeunload', () => {
+  sessionStorage.setItem('potager_cart', JSON.stringify(cart));
+});
+try {
+  const saved = sessionStorage.getItem('potager_cart');
+  if (saved) { cart = JSON.parse(saved); updateCartUI(); }
+} catch(e) {}
+</script>
+
+</body>
+</html>
